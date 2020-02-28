@@ -9,6 +9,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "Shader.h"
 
 float vertices[] = {
 	-0.5f, -0.5f, 0.0f,
@@ -97,43 +98,46 @@ int main()
 	int nCount;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nCount);
 
-	//顶点着色器
-	int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertextShaderSource, NULL);
-	glCompileShader(vertexShader);
+	Shader shader("D:\\PersonGit\\opengl_learn\\opengldemo\\Debug\\vertex.vs","D:\\PersonGit\\opengl_learn\\opengldemo\\Debug\\fragment.fs");
+	//Shader shader("vertex.vs", "fragment.fs");
 
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success){
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		int i = 0;
-		++i;
-	}
-	//片段着色器
-	int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
+	////顶点着色器
+	//int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	//glShaderSource(vertexShader, 1, &vertextShaderSource, NULL);
+	//glCompileShader(vertexShader);
 
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success){
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-	}
-	
+	//int success;
+	//char infoLog[512];
+	//glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	//if (!success){
+	//	glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+	//	int i = 0;
+	//	++i;
+	//}
+	////片段着色器
+	//int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	//glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	//glCompileShader(fragmentShader);
 
-	//链接
-	int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	//glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	//if (!success){
+	//	glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+	//}
+	//
 
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success){
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-	}
+	////链接
+	//int shaderProgram = glCreateProgram();
+	//glAttachShader(shaderProgram, vertexShader);
+	//glAttachShader(shaderProgram, fragmentShader);
+	//glLinkProgram(shaderProgram);
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	//glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	//if (!success){
+	//	glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+	//}
+
+	//glDeleteShader(vertexShader);
+	//glDeleteShader(fragmentShader);
 
 
 	unsigned int VBO, VAO, EBO;
@@ -161,7 +165,7 @@ int main()
 	//glBindVertexArray(0);
 
 	//------------------------------------------------------------------------------------
-	glUseProgram(shaderProgram);
+	shader.use();
 	while (!glfwWindowShouldClose(window)){
 		processInput(window);
 		//----------------------
