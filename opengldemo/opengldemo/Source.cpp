@@ -71,7 +71,7 @@ int main()
 	int nCount;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nCount);
 
-	Shader shader("D:\\PersonGit\\opengl_learn\\opengldemo\\Debug\\vertex.vs","D:\\PersonGit\\opengl_learn\\opengldemo\\Debug\\fragment.fs");
+	Shader shader("D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\vertex.vs","D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\fragment.fs");
 
 	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
