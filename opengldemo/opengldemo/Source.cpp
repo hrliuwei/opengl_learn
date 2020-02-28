@@ -31,23 +31,27 @@ void processInput(GLFWwindow* window)
 
 const char *vertextShaderSource = "#version 330 core\n"
 	"layout (location = 0) in vec3 aPos;\n"
+	"out vec4 vertexColor;\n"
 	"void main()\n"
 	"{\n"
 	"    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+	"    vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
 	"}\0";
 
 const char *fragmentShaderSource = "#version 330 core\n"
+	"uniform vec4 ourColor;\n"
 	"out vec4 FragColor;\n"
 	"void main()\n"
 	"{\n"
-	"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	"	FragColor = ourColor;\n"
 	"}\0";
 
 const char *fragmentShaderSource2 = "#version 330 core\n"
+	"in vec4 ourColor"
 	"out vec4 FragColor;\n"
 	"void main()\n"
 	"{\n"
-	"	FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+	"	FragColor = ourColor;\n"
 	"}\0";
 
 float vertices2[] = {
@@ -96,6 +100,13 @@ int main()
 
 
 	//------------------------------------------------------------------------------------
+	//顶点个数
+	int nCount;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nCount);
+
+
+
+
 	//顶点着色器
 	int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertextShaderSource, NULL);
@@ -194,13 +205,19 @@ int main()
 		//----------------------
 
 		//画三角形
-	    glUseProgram(shaderProgram);
+		float timeValue = glfwGetTime();
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		float greenValue2 = (sin(timeValue) / 2.0f) + 0.1f;
+		int vertexColorlocation = glGetUniformLocation(shaderProgram, "ourColor");
+
+		glUseProgram(shaderProgram);
+		glUniform4f(vertexColorlocation, 0.0f, greenValue, 0.0f, 1.0f);
 		glBindVertexArray(VAO[0]);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 		glUseProgram(shaderProgram2);
+		glUniform4f(vertexColorlocation, 1.0f, greenValue2, 0.0f, 1.0f);
 		glBindVertexArray(VAO[1]);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
