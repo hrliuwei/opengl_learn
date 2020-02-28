@@ -10,13 +10,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Shader.h"
-
-float vertices[] = {
-	-0.5f, -0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-	0.0f, 0.5f, 0.0f
-};
-
+#include "stb_image.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -30,44 +24,23 @@ void processInput(GLFWwindow* window)
 	}
 }
 
-const char *vertextShaderSource = "#version 330 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"layout (location = 1) in vec3 aColor;\n"
-	"out vec3 ourColor;\n"
-	"void main()\n"
-	"{\n"
-	"    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"    ourColor = aColor;\n"
-	"}\0";
-
-const char *fragmentShaderSource = "#version 330 core\n"
-	"in vec3 ourColor;\n"
-	"out vec4 FragColor;\n"
-	"void main()\n"
-	"{\n"
-	"	FragColor = vec4(ourColor,1.0);\n"
-	"}\0";
-
-float vertices2[] = {
-		 0.5f,  0.5f, 0.0f,  // top right
-		 0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
-};
-unsigned int indices2[] = {  // note that we start from 0!
-	0, 1, 3,  // first Triangle
-	1, 2, 3   // second Triangle
-};
-
 float firstTriangle[] = {
   0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
  -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
   0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶部  // top 
 };
-float secondTriangle[] = {
-	0.5f, -0.5f, 0.0f,  // left
-	-0.5f, -0.5f, 0.0f,  // right
-	-0.5f, 0.5f, 0.0f   // top 
+
+float vertices[] = {
+	//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
+};
+
+unsigned int indices[] = {
+	   0, 1, 3, // first triangle
+	   1, 2, 3  // second triangle
 };
 
 int main()
@@ -99,60 +72,50 @@ int main()
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nCount);
 
 	Shader shader("D:\\PersonGit\\opengl_learn\\opengldemo\\Debug\\vertex.vs","D:\\PersonGit\\opengl_learn\\opengldemo\\Debug\\fragment.fs");
-	//Shader shader("vertex.vs", "fragment.fs");
-
-	////顶点着色器
-	//int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	//glShaderSource(vertexShader, 1, &vertextShaderSource, NULL);
-	//glCompileShader(vertexShader);
-
-	//int success;
-	//char infoLog[512];
-	//glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	//if (!success){
-	//	glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-	//	int i = 0;
-	//	++i;
-	//}
-	////片段着色器
-	//int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	//glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	//glCompileShader(fragmentShader);
-
-	//glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	//if (!success){
-	//	glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-	//}
-	//
-
-	////链接
-	//int shaderProgram = glCreateProgram();
-	//glAttachShader(shaderProgram, vertexShader);
-	//glAttachShader(shaderProgram, fragmentShader);
-	//glLinkProgram(shaderProgram);
-
-	//glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	//if (!success){
-	//	glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-	//}
-
-	//glDeleteShader(vertexShader);
-	//glDeleteShader(fragmentShader);
-
 
 	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
-	//glGenBuffers(1, &EBO);
+	glGenBuffers(1, &EBO);
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(firstTriangle), firstTriangle, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	
+
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	//设置环绕方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load("D:\\PersonGit\\container.jpg", &width, &height, &nrChannels, 0);
+	if (data){
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		stbi_image_free(data);
+	}
+	
+
+
+
 
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2), indices2, GL_STATIC_DRAW);
@@ -165,7 +128,7 @@ int main()
 	//glBindVertexArray(0);
 
 	//------------------------------------------------------------------------------------
-	shader.use();
+	//shader.use();
 	while (!glfwWindowShouldClose(window)){
 		processInput(window);
 		//----------------------
@@ -174,8 +137,12 @@ int main()
 		//----------------------
 
 		//画三角形
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		shader.use();
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		
 
 		glfwSwapBuffers(window);
