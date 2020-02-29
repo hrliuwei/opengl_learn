@@ -12,6 +12,8 @@
 #include "Shader.h"
 #include "stb_image.h"
 
+float mixvalue = 0.5f;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -21,6 +23,18 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
 		glfwSetWindowShouldClose(window, true);
+	}
+	else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+		mixvalue += 0.001f;
+		if (mixvalue >= 1.0f){
+			mixvalue = 1.0f;
+		}
+	}
+	else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		mixvalue -= 0.001f;
+		if (mixvalue <= 0.0f) {
+			mixvalue = 0.0f;
+		}
 	}
 }
 
@@ -156,6 +170,7 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
+		shader.setFloat("mixValue", mixvalue);
 
 		shader.use();
 		glBindVertexArray(VAO);
