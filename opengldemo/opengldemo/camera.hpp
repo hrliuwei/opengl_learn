@@ -15,8 +15,8 @@ enum Camera_Movement
 
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
-const float SPEED = 2.5;
-const float SENSITIVITY = 0.1f;
+const float SPEED = 0.00025;
+const float SENSITIVITY = 0.01f;
 const float ZOOM = 45.0f;
 
 class Camera
@@ -44,6 +44,7 @@ public:
 	{
 		Position = position;
 		WorldUp = up;
+		Zoom = ZOOM;
 		Yaw = yaw;
 		Pitch = pitch;
 		updateCameraVectors();
@@ -110,12 +111,6 @@ public:
 		if (Zoom >= 45.0f)
 			Zoom = 45.0f;
 	}
-
-
-
-
-
-
 
 
 private:
