@@ -6,7 +6,8 @@ struct Material{
 };
 
 struct Light{
-	vec3 positon;
+	//vec3 positon;
+	vec3 direction;
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
@@ -22,15 +23,17 @@ uniform Material material;
 uniform Light light;
 void main()
 {
+	vec3 lightDir = normalize(-light.direction);
+	
 	vec3 ambient = light.ambient * vec3(texture(material.diffuse, texCoords));
 	
 	vec3 normal = normalize(Normal);
-	vec3 lightv = normalize(lightPos - FragPos);
-	float diff = max(dot(lightv, normal), 0);
+	//vec3 lightv = normalize(lightPos - FragPos);
+	float diff = max(dot(lightDir, normal), 0);
 	vec3 diffuse = (diff * vec3(texture(material.diffuse,texCoords))) * light.diffuse;
 	
 	vec3 viewDir = normalize(cameraPos - FragPos);
-	vec3 reflectDir = reflect(-lightv,normal);
+	vec3 reflectDir = reflect(-lightDir,normal);
 	float spec = pow(max(dot(viewDir, reflectDir),0),material.shininess);
 	vec3 specuse = (spec * vec3(texture(material.specular,texCoords))) * light.specular;
 	
