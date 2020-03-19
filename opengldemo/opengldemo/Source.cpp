@@ -125,14 +125,14 @@ float vertices[] = {
 	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
-unsigned int LoadTexTure()
+unsigned int LoadTexTure(char const* path)
 {
 	unsigned int texture;
 	glGenTextures(1, &texture);
 
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load("D:\\PersonGit\\container2.png", &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
 	if (data){
 		GLenum format;
 		if (nrChannels == 1){
@@ -211,15 +211,17 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	unsigned int texture = LoadTexTure();
+	unsigned int diffuseMap = LoadTexTure("D:\\PersonGit\\container2.png");
+	unsigned int specularMap = LoadTexTure("D:\\PersonGit\\container2_specular.png");
 	
 	
 	lightingshader.use();
 	lightingshader.setInt("material.diffuse", 0);
+	lightingshader.setInt("material.speular", 1);
 
 
 	glEnable(GL_DEPTH_TEST);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	while (!glfwWindowShouldClose(window)){
@@ -232,11 +234,14 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D,texture);
+		glBindTexture(GL_TEXTURE_2D,diffuseMap);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
 
 		lightingshader.use();
-		lightingshader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-		lightingshader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+		//lightingshader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+		//lightingshader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
 		lightingshader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		lightingshader.setFloat("material.shininess", 32.0f);
 
@@ -249,7 +254,7 @@ int main()
 		glm::vec3 ambientcolor = diffusecolor * glm::vec3(0.2f);
 		lightingshader.setVec3("light.diffuse", diffusecolor);
 		lightingshader.setVec3("light.ambient", ambientcolor);
-		lightingshader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		lightingshader.setVec3("light.specular", 0.5f, 0.5f, 0.5f);
 
 
 		lightingshader.setVec3("lightPos", lightPos);
