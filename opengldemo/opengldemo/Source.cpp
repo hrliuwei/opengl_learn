@@ -29,7 +29,7 @@ float yaw = 0.0f;
 float pitch = 0.0f;
 float fov = 45.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-glm::vec3 lightPos(1.2f, 0.5f, 2.0f);
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -42,7 +42,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (bFirstMouse){
+	if (bFirstMouse) {
 		lastX = xpos;
 		lastY = ypos;
 		bFirstMouse = false;
@@ -58,20 +58,20 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 void processInput(GLFWwindow* window)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
 	float cameraSpeed = 0.0005f*delatime;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		camera.ProcessKeyboard(FORWARD, delatime);
 	}
-	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 		camera.ProcessKeyboard(BACKWARD, delatime);
 	}
-	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 		camera.ProcessKeyboard(LEFT, delatime);
 	}
-	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, delatime);
 	}
 }
@@ -133,13 +133,15 @@ unsigned int LoadTexTure(char const* path)
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
-	if (data){
+	if (data) {
 		GLenum format;
-		if (nrChannels == 1){
+		if (nrChannels == 1) {
 			format = GL_RED;
-		}else if (nrChannels == 3){
+		}
+		else if (nrChannels == 3) {
 			format = GL_RGB;
-		}else if (nrChannels == 4){
+		}
+		else if (nrChannels == 4) {
 			format = GL_RGBA;
 		}
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -164,13 +166,13 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpengl", NULL, NULL);
-	if (window == NULL){
+	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "failed initialize GLAD" << std::endl;
 		return -1;
 	}
@@ -183,7 +185,7 @@ int main()
 	int nCount;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nCount);
 
-	Shader lightingshader("D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\vertex.vs","D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\fragment.fs");
+	Shader lightingshader("D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\vertex.vs", "D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\fragment.fs");
 	Shader lampshader("D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\lamp.vs", "D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\lamp.fs");
 
 	unsigned int VBO, cubeVAO;
@@ -213,8 +215,8 @@ int main()
 
 	unsigned int diffuseMap = LoadTexTure("D:\\PersonGit\\container2.png");
 	unsigned int specularMap = LoadTexTure("D:\\PersonGit\\container2_specular.png");
-	
-	
+
+
 	lightingshader.use();
 	lightingshader.setInt("material.diffuse", 0);
 	lightingshader.setInt("material.speular", 1);
@@ -241,7 +243,7 @@ int main()
 	};
 
 
-	while (!glfwWindowShouldClose(window)){
+	while (!glfwWindowShouldClose(window)) {
 		float currenttiem = glfwGetTime();
 		delatime = currenttiem - lasttime;
 		delatime = currenttiem;
@@ -251,7 +253,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D,diffuseMap);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
@@ -262,7 +264,7 @@ int main()
 		lightingshader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		lightingshader.setFloat("material.shininess", 32.0f);
 
-		glm::vec3 lightColor = glm::vec3(1.0f,0.5f,0.8f);
+		glm::vec3 lightColor = glm::vec3(1.0f, 0.5f, 0.8f);
 		//lightColor.x = sin(glfwGetTime()*2.0f);
 		//lightColor.y = sin(glfwGetTime()*0.7f);
 		//lightColor.z = sin(glfwGetTime()*1.3f);
@@ -275,15 +277,19 @@ int main()
 
 
 		//lightingshader.setVec3("lightPos", lightPos);
-		lightingshader.setVec3("light.direction", -0.2, -1.0f, -0.3f);
+		lightingshader.setVec3("light.position", lightPos);
 		lightingshader.setVec3("cameraPos", camera.Position);
-		
+
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), float(nwndWidth) / (float)nwndHeight, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		lightingshader.setMat4("projection", projection);
 		lightingshader.setMat4("view", view);
-	
-		glBindVertexArray(cubeVAO); 
+
+		lightingshader.setFloat("light.constant", 1.0f);
+		lightingshader.setFloat("light.linear", 0.09f);
+		lightingshader.setFloat("light.quadratic", 0.032f);
+
+		glBindVertexArray(cubeVAO);
 		for (unsigned int i = 0; i < 10; i++)
 		{
 			// calculate the model matrix for each object and pass it to shader before drawing
@@ -300,7 +306,7 @@ int main()
 		lampshader.setMat4("projection", projection);
 		lampshader.setMat4("view", view);
 
-		
+
 		/*lightPos.x = 1.0f + sin(glfwGetTime())*1.0f;
 		lightPos.y = 1.0 + sin(glfwGetTime())*1.0f;
 		glm::mat4 model = glm::mat4(1.0f);
@@ -310,7 +316,7 @@ int main()
 
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);*/
-		
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
