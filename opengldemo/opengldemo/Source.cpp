@@ -311,8 +311,8 @@ int main()
 		lightingshader.setVec3("spotLight.position", camera.Position);
 		lightingshader.setVec3("spotLight.direction", camera.Front);
 		lightingshader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		lightingshader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-		lightingshader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+		lightingshader.setVec3("spotLight.diffuse", 0.5f, 0.5f, 0.5f);
+		lightingshader.setVec3("spotLight.specular", 0.5f, 0.5f, 0.5f);
 		lightingshader.setFloat("spotLight.constant", 1.0f);
 		lightingshader.setFloat("spotLight.linear", 0.09);
 		lightingshader.setFloat("spotLight.quadratic", 0.032);
