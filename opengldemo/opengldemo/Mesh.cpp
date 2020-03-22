@@ -5,7 +5,7 @@
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> texture)
 {
 	m_vertices = vertices;
-	m_vertices = vertices;
+	m_textures = texture;
 	m_indices = indices;
 	setUpMesh();
 }
