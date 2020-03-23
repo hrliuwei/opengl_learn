@@ -190,6 +190,16 @@ int main()
 	
 	std::string path = "D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\modelobjs\\nanosuit.obj";
 	Model ourModel(path);
+
+	// positions of the point lights
+	glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(0.0f, 0.0f, 3.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+	};
+
+
 	while (!glfwWindowShouldClose(window)) {
 		float currenttiem = glfwGetTime();
 		delatime = currenttiem - lasttime;
@@ -200,6 +210,28 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		model_shader.use();
+		model_shader.setVec3("viewPos", camera.Position);
+		// point light 1
+		model_shader.setVec3("pointLights[0].position", pointLightPositions[0]);
+		model_shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+		model_shader.setVec3("pointLights[0].diffuse", 0.0f, 0.8f, 0.0f);
+		model_shader.setVec3("pointLights[0].specular", 0.0f, 1.0f, 0.0f);
+		model_shader.setFloat("pointLights[0].constant", 1.0f);
+		model_shader.setFloat("pointLights[0].linear", 0.09);
+		model_shader.setFloat("pointLights[0].quadratic", 0.032);
+		// point light 2
+		model_shader.setVec3("pointLights[1].position", pointLightPositions[1]);
+		model_shader.setVec3("pointLights[1].ambient", 0.05f, 0.00f, 0.00f);
+		model_shader.setVec3("pointLights[1].diffuse", 0.8f, 0.0f, 0.0f);
+		model_shader.setVec3("pointLights[1].specular", 1.0f, 0.0f, 0.0f);
+		model_shader.setFloat("pointLights[1].constant", 1.0f);
+		model_shader.setFloat("pointLights[1].linear", 0.09);
+		model_shader.setFloat("pointLights[1].quadratic", 0.032);
+
+
+
+
+
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), float(800) / float(600), 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		model_shader.setMat4("projection", projection);
@@ -208,7 +240,7 @@ int main()
 		float angel = glfwGetTime()*30;
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
-		model = glm::rotate(model, glm::radians(angel), glm::vec3(0.5f,1.0f,0.0f));
+		model = glm::rotate(model, glm::radians(angel), glm::vec3(0.0f,0.5f,0.0f));
 		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 		model_shader.setMat4("model", model);
 		ourModel.Draw(model_shader);
