@@ -258,7 +258,7 @@ int main()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
-	unsigned int cubeTexture = LoadTexTure((sPath +"resource\\" + "marble.jpg").c_str());
+	unsigned int cubeTexture = LoadTexTure((sPath +"resource\\" + "container.jpg").c_str());
 	unsigned int floorTexture = LoadTexTure((sPath + "resource\\"+"metal.png").c_str());
 
 	shader.use();
