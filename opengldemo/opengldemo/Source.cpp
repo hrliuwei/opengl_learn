@@ -261,6 +261,7 @@ int main()
 	int nwndHeight = SCR_HEIGHT;
 	glViewport(0, 0, nwndWidth, nwndHeight);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 	//------------------------------------------------------------------------------------
 	//顶点属性个数
 	int nCount;
@@ -268,26 +269,11 @@ int main()
 
 	std::string sPath = "D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\";
 
-	Shader shader((sPath + "geo.vs").c_str(), (sPath + "geo.fs").c_str(), (sPath + "geo.gs").c_str());
+	//Shader shader((sPath + "geo.vs").c_str(), (sPath + "geo.fs").c_str(), (sPath + "geo.gs").c_str());
+	Shader shader((sPath + "default.vs").c_str(), (sPath + "default.fs").c_str());
+	Shader geoshader((sPath + "geo.vs").c_str(), (sPath + "geo.fs").c_str(), (sPath + "geo.gs").c_str());
 
-	float points[] = {
-	   -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
-		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
-		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
-	   -0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
-	};
-	
-	unsigned int VBO, VAO;
-	glGenBuffers(1, &VBO);
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
-	glBindVertexArray(0);
+	Model nanosuit((sPath + "modelobjs/nanosuit.obj"));
 
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window)) {
@@ -299,9 +285,28 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();;
+		glm::mat4 model = glm::mat4(1.0f);
 		shader.use();
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_POINTS, 0, 4);
+		shader.setMat4("projection", projection);
+		shader.setMat4("view", view);
+		shader.setMat4("model", model);
+
+		// add time component to geometry shader in the form of a uniform
+		//shader.setFloat("time", glfwGetTime());
+
+		// draw model
+		nanosuit.Draw(shader);
+
+		geoshader.use();
+		geoshader.setMat4("projection", projection);
+		geoshader.setMat4("view", view);
+		geoshader.setMat4("model", model);
+
+		nanosuit.Draw(geoshader);
+
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
