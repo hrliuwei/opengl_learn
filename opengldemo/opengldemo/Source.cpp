@@ -252,7 +252,7 @@ int main()
 	glfwMakeContextCurrent(window);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "failed initialize GLAD" << std::endl;
 		return -1;
@@ -268,48 +268,27 @@ int main()
 
 	std::string sPath = "D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\";
 
-	Shader shader((sPath + "cubemaps.vs").c_str(), (sPath + "cubemaps.fs").c_str());
-	Shader skyboxShader((sPath + "skybox.vs").c_str(), (sPath + "skybox.fs").c_str());
+	Shader shader((sPath + "geo.vs").c_str(), (sPath + "geo.fs").c_str(), (sPath + "geo.gs").c_str());
 
-	// cube VAO
-	unsigned int cubeVAO, cubeVBO;
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-	glBindVertexArray(cubeVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-
-	//skybox
-	unsigned int skyboxVAO, skyboxVBO;
-	glGenVertexArrays(1, &skyboxVAO);
-	glGenBuffers(1, &skyboxVBO);
-	glBindVertexArray(skyboxVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	unsigned int cubeTexture = LoadTexTure((sPath + "resource\\container.jpg").c_str());
-	
-	std::vector<std::string> faces{
-		sPath + "resource\\skybox\\" + "right.jpg",
-		sPath + "resource\\skybox\\" + "left.jpg",
-		sPath + "resource\\skybox\\" + "top.jpg",
-		sPath + "resource\\skybox\\" + "bottom.jpg",
-		sPath + "resource\\skybox\\" + "front.jpg",
-		sPath + "resource\\skybox\\" + "back.jpg"
+	float points[] = {
+	   -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
+		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
+		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
+	   -0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
 	};
-	unsigned int cubemapTexture = loadCubemap(faces);
+	
+	unsigned int VBO, VAO;
+	glGenBuffers(1, &VBO);
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+	glBindVertexArray(0);
 
-	shader.use();
-	shader.setInt("skybox", 0);
-
-	skyboxShader.use();
-	skyboxShader.setInt("skybox", 0);
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window)) {
 		float currenttiem = glfwGetTime();
@@ -320,39 +299,9 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// draw scene as normal
 		shader.use();
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		model = glm::rotate(model, glm::radians(15.0f), glm::vec3(1.0f, 1.0f, 0.0f));
-		shader.setMat4("model", model);
-		shader.setMat4("view", view);
-		shader.setMat4("projection", projection);
-		shader.setVec3("cameraPos", camera.Position);
-
-		// cubes
-		glBindVertexArray(cubeVAO);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, cubemapTexture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-
-		// draw skybox as last
-		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-		skyboxShader.use();
-		view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-		//view = glm::mat4(camera.GetViewMatrix());
-		skyboxShader.setMat4("view", view);
-		skyboxShader.setMat4("projection", projection);
-
-		//// skybox cube
-		glBindVertexArray(skyboxVAO);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-		glDepthFunc(GL_LESS); // set depth function back to default
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_POINTS, 0, 4);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
