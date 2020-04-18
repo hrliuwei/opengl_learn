@@ -272,58 +272,36 @@ int main()
 	//Shader shader((sPath + "geo.vs").c_str(), (sPath + "geo.fs").c_str(), (sPath + "geo.gs").c_str());
 	Shader shader((sPath + "instance.vs").c_str(), (sPath + "instance.fs").c_str());
 
-	// generate a list of 100 quad locations/translation-vectors
-	// ---------------------------------------------------------
-	glm::vec2 translations[100];
-	int index = 0;
-	float offset = 0.1f;
-	for (int y = -10; y < 10; y += 2)
-	{
-		for (int x = -10; x < 10; x += 2)
-		{
-			glm::vec2 translation;
-			translation.x = (float)x / 10.0f + offset;
-			translation.y = (float)y / 10.0f + offset;
-			translations[index++] = translation;
-		}
+	Model rock((sPath + "modelobjs\\rock\\rock.obj").c_str());
+	Model planet((sPath + "modelobjs\\planet\\planet.obj").c_str());
+
+	unsigned int amount = 1000;
+	glm::mat4* modelMatrices;
+	modelMatrices = new glm::mat4[amount];
+	srand(glfwGetTime());
+	float radius = 50.0;
+	float offset = 2.5f;
+
+	for (unsigned int i = 0; i < amount; i++) {
+		glm::mat4 model = glm::mat4(1.0f);
+
+		float angel = (float)i / (float)amount * 360.0f;
+		float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float x = sin(angel)*radius + displacement;
+		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float y = displacement * 0.4f;
+		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+		float z = cos(angel)*radius + displacement;
+		model = glm::translate(model, glm::vec3(x, y, z));
+
+		float scale = 0.05 + (rand() % 20 / 100.0f);
+		model = glm::scale(model, glm::vec3(scale));
+
+		float rotAngel = rand() % 360;
+		model = glm::rotate(model, rotAngel, glm::vec3(0.4f, 0.6f, 0.8f));
+
+		modelMatrices[i] = model;
 	}
-
-	// store instance data in an array buffer
-    // --------------------------------------
-	unsigned int instanceVBO;
-	glGenBuffers(1, &instanceVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, &translations[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
-
-	float quadVertices[] = {
-		// positions     // colors
-		-0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
-		 0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
-		-0.05f, -0.05f,  0.0f, 0.0f, 1.0f,
-
-		-0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
-		 0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
-		 0.05f,  0.05f,  0.0f, 1.0f, 1.0f
-	};
-
-	unsigned int quadVAO, quadVBO;
-	glGenVertexArrays(1, &quadVAO);
-	glGenBuffers(1, &quadVBO);
-	glBindVertexArray(quadVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
-	// also set instance data
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO); // this attribute comes from a different vertex buffer
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glVertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
 
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window)) {
@@ -335,10 +313,23 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(800 / 600), 0.1f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();
 		shader.use();
-		glBindVertexArray(quadVAO);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100); // 100 triangles of 6 vertices each
-		glBindVertexArray(0);
+		shader.setMat4("projection", projection);
+		shader.setMat4("view", view);
+
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+		shader.setMat4("model", model);
+		planet.Draw(shader);
+
+		for (unsigned int i = 0; i < amount; ++i) {
+			shader.setMat4("model", modelMatrices[i]);
+			rock.Draw(shader);
+		}
+
 
 
 		glfwSwapBuffers(window);
