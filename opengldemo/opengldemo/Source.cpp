@@ -33,7 +33,7 @@ float lastY = 300;
 float yaw = 0.0f;
 float pitch = 0.0f;
 float fov = 45.0f;
-Camera camera(glm::vec3(0.0f, 0.0f, 50.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -147,93 +147,49 @@ unsigned int loadCubemap(vector<std::string> faces)
 	return textureID;
 }
 
-float cubeVertices[] = {
-	// positions          // texture Coords
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+GLfloat cubeVertices[] = {
+	// Positions       
+	-0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f, -0.5f,
+	 0.5f,  0.5f, -0.5f,
+	 0.5f,  0.5f, -0.5f,
+	-0.5f,  0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,
+	 0.5f, -0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,
+	-0.5f,  0.5f,  0.5f,
+	-0.5f, -0.5f,  0.5f,
 
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,
+	-0.5f,  0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f,  0.5f,
+	-0.5f,  0.5f,  0.5f,
 
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f, -0.5f,
+	 0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f,  0.5f,
+	 0.5f, -0.5f,  0.5f,
+	-0.5f, -0.5f,  0.5f,
+	-0.5f, -0.5f, -0.5f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-};
-float skyboxVertices[] = {
-	// positions          
-	-1.0f,  1.0f, -1.0f,
-	-1.0f, -1.0f, -1.0f,
-	 1.0f, -1.0f, -1.0f,
-	 1.0f, -1.0f, -1.0f,
-	 1.0f,  1.0f, -1.0f,
-	-1.0f,  1.0f, -1.0f,
-
-	-1.0f, -1.0f,  1.0f,
-	-1.0f, -1.0f, -1.0f,
-	-1.0f,  1.0f, -1.0f,
-	-1.0f,  1.0f, -1.0f,
-	-1.0f,  1.0f,  1.0f,
-	-1.0f, -1.0f,  1.0f,
-
-	 1.0f, -1.0f, -1.0f,
-	 1.0f, -1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f, -1.0f,
-	 1.0f, -1.0f, -1.0f,
-
-	-1.0f, -1.0f,  1.0f,
-	-1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f, -1.0f,  1.0f,
-	-1.0f, -1.0f,  1.0f,
-
-	-1.0f,  1.0f, -1.0f,
-	 1.0f,  1.0f, -1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	-1.0f,  1.0f,  1.0f,
-	-1.0f,  1.0f, -1.0f,
-
-	-1.0f, -1.0f, -1.0f,
-	-1.0f, -1.0f,  1.0f,
-	 1.0f, -1.0f, -1.0f,
-	 1.0f, -1.0f, -1.0f,
-	-1.0f, -1.0f,  1.0f,
-	 1.0f, -1.0f,  1.0f
+	-0.5f,  0.5f, -0.5f,
+	 0.5f,  0.5f, -0.5f,
+	 0.5f,  0.5f,  0.5f,
+	 0.5f,  0.5f,  0.5f,
+	-0.5f,  0.5f,  0.5f,
+	-0.5f,  0.5f, -0.5f
 };
 
 int main()
@@ -242,6 +198,8 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	
 
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpengl", NULL, NULL);
 	if (window == NULL) {
@@ -266,79 +224,28 @@ int main()
 	glfwSetScrollCallback(window, scroll_callback);
 
 	// tell GLFW to capture our mouse
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//------------------------------------------------------------------------------------
 	//顶点属性个数
 	int nCount;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nCount);
 
 	std::string sPath = "D:\\PersonGit\\opengl_learn\\opengldemo\\opengldemo\\";
+	
+	Shader shader((sPath + "anti.vs").c_str(), (sPath + "anti.fs").c_str());
 
-	//Shader shader((sPath + "geo.vs").c_str(), (sPath + "geo.fs").c_str(), (sPath + "geo.gs").c_str());
-	Shader Planetshader((sPath + "instancebig.vs").c_str(), (sPath + "instance.fs").c_str());
-	Shader shader((sPath + "instance.vs").c_str(), (sPath + "instance.fs").c_str());
-
-	Model rock((sPath + "modelobjs\\rock\\rock.obj").c_str());
-	Model planet((sPath + "modelobjs\\planet\\planet.obj").c_str());
-
-	unsigned int amount = 20000;
-	glm::mat4* modelMatrices;
-	modelMatrices = new glm::mat4[amount];
-	srand(glfwGetTime());
-	float radius = 50.0;
-	float offset = 2.5f;
-
-	for (unsigned int i = 0; i < amount; i++) {
-		glm::mat4 model = glm::mat4(1.0f);
-
-		float angel = (float)i / (float)amount * 360.0f;
-		float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-		float x = sin(angel)*radius + displacement;
-		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-		float y = displacement * 0.4f;
-		displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-		float z = cos(angel)*radius + displacement;
-		model = glm::translate(model, glm::vec3(x, y, z));
-
-		float scale = 0.05 + (rand() % 20 / 100.0f);
-		model = glm::scale(model, glm::vec3(scale));
-
-		float rotAngel = rand() % 360;
-		model = glm::rotate(model, rotAngel, glm::vec3(0.4f, 0.6f, 0.8f));
-
-		modelMatrices[i] = model;
-	}
-
-	unsigned int  buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, amount*sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
-
-	for (unsigned int i = 0; i < rock.m_meshes.size(); ++i) {
-		unsigned int VAO = rock.m_meshes[i].VAO;
-		glBindVertexArray(VAO);
-
-		GLsizei vec4Size = sizeof(glm::vec4);
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)0);
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(vec4Size));
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(2*vec4Size));
-		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(3 * vec4Size));
-
-		glVertexAttribDivisor(3, 1);
-		glVertexAttribDivisor(4, 1);
-		glVertexAttribDivisor(5, 1);
-		glVertexAttribDivisor(6, 1);
-
-		glBindVertexArray(0);
-	}
-
-
+	unsigned int cubVAO, cubVBO;
+	glGenVertexArrays(1, &cubVAO);
+	glGenBuffers(1, &cubVBO);
+	glBindVertexArray(cubVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
+	glBindVertexArray(0);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 	while (!glfwWindowShouldClose(window)) {
 		float currenttiem = glfwGetTime();
 		delatime = currenttiem - lasttime;
@@ -348,38 +255,19 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(800 / 600), 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
 		shader.use();
+		glm::mat4 projection = glm::perspective(camera.Zoom, float(800 / 600),0.1f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMat4("projection", projection);
 		shader.setMat4("view", view);
 
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+		model = glm::rotate(model, glm::radians(20.0f), glm::vec3(1.0f, 1.0f, 0.0f));
 		shader.setMat4("model", model);
+		glBindVertexArray(cubVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
 
-		Planetshader.use();
-		Planetshader.setMat4("projection", projection);
-		Planetshader.setMat4("view", view);
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-		Planetshader.setMat4("model", model);
-
-		planet.Draw(Planetshader);
-		/*for (unsigned int i = 0; i < planet.m_meshes.size(); ++i) {
-			glBindVertexArray(planet.m_meshes[i].VAO);
-			glDrawElementsInstanced(
-				GL_TRIANGLES, planet.m_meshes[i].m_indices.size(), GL_UNSIGNED_INT, 0, 1);
-		}*/
-
-		shader.use();
-		for (unsigned int i = 0; i < rock.m_meshes.size(); ++i) {
-			glBindVertexArray(rock.m_meshes[i].VAO);
-			glDrawElementsInstanced(
-				GL_TRIANGLES, rock.m_meshes[i].m_indices.size(), GL_UNSIGNED_INT, 0, amount);
-		}
 
 
 
